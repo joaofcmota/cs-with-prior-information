@@ -1,5 +1,4 @@
 # cs-with-prior-information
-This repository provides a Matlab implementation of the ADMM-based solvers for L1-L1 and L1-L2 minimization.
 This software provides a Matlab implementation of solvers for the L1-L1 and L1-L2 
 minimization problems, as described in
 
@@ -29,14 +28,17 @@ Modified-CS, a problem proposed in
 Organization
 ------------
 
-solvers: contains code for 
-           * L1-L1 minimization
-           * L1-L2 minimization
-           * Modified-CS
-         Each folder contains a detailed derivation of the implemented algorithm
+*solvers*: contains code for 
 
-createFigures: contains code to reproduce the figures in [1].
+* L1-L1 minimization
 
+* L1-L2 minimization
+
+* Modified-CS
+
+Each folder contains a detailed derivation of the implemented algorithm.
+
+*createFigures*: contains code to reproduce the figures in [1].
 
 If you use this code, please cite [1] and/or [2].
 
