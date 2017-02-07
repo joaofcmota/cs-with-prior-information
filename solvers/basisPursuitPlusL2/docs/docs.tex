@@ -1,0 +1,140 @@
+\documentclass[letter,10pt]{article}
+%\documentclass[journal,twocolumn]{IEEEtran}
+%\documentclass[onecolumn,journal,draftcls,11pt]{IEEEtran}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{lmodern}             % For a clear font
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{xcolor}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{epsfig}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{pst-grad}
+\usepackage{ifthen}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{setspace}           % For commands \singlespacing, \onehalfspacing, \doublespacing
+\usepackage[framed]{ntheorem}
+\usepackage{framed}
+
+\usepackage[letterpaper,
+top=1.2in,
+bottom=1.5in,
+left=1.0in,
+right=1.0in]{geometry}
+
+
+%\theoremstyle{definition}
+\theoremstyle{definition}
+\newtheorem{Algorithm}{Algorithm}
+%\newtheorem*{Definition}{Definition}
+%\newtheorem{Theorem}{Theorem}[chapter]
+\shadecolor{black!10!white}
+\theorembodyfont{\rm\normalfont}
+\theoremindent0cm
+\newshadedtheorem{thm}{Theorem}
+
+%\theoremstyle{plain}
+
+%\newtheorem{Lemma}{Lemma}
+\newshadedtheorem{lem}{Lemma}
+\newshadedtheorem{proposition}{Proposition}
+\newshadedtheorem{theorem}{Theorem}
+\newshadedtheorem{Corollary}{Corollary}
+\newshadedtheorem{definition}{Definition}
+\newtheorem{Assumption}{Assumption}
+\newtheorem{Remark}{Remark}
+
+\theoremstyle{nonumberplain}
+\theoremindent0cm
+\newtheorem{proof}{Proof}
+
+
+%\newcommand{\mypar}[1]{{\bf #1.}}
+
+\newcommand{\mypar}[1]{\bigskip\noindent {\bf #1.}}
+
+\newcommand\mynote[1]{\mbox{}\marginpar{\footnotesize\raggedright\hspace{0pt}\color{blue}\emph{#1}}}
+
+\newcommand{\answer}[1]{\medskip\noindent \textcolor[rgb]{0.00,0.00,1.00}{#1}\bigskip}
+
+\newcommand{\qed}{\hfill $\Box$}
+
+\definecolor{red}{RGB}{153,0,0}
+
+
+
+\title{Solver for $\ell_1$ plus $\ell_2$ minimization}
+
+\author{}
+
+
+\begin{document}
+
+\maketitle
+
+	Consider	
+	\begin{equation}\label{Eq:L1L2SolverProb}
+		\begin{array}{ll}
+			\underset{x}{\text{minimize}} & \|x\|_1 + \frac{\beta}{2}\|x - w\|^2 \\
+			\text{subject to} & Ax = b\,.
+		\end{array}		
+	\end{equation}
+	We might attempt to solve~\eqref{Eq:L1L2SolverProb} with a method similar to the solver for the $\ell_1$-$\ell_1$ problem, i.e., when the second term of the objective is replaced by~$\beta\|x-w\|_1$ (see folder \verb#../../basisPursuitPlusL1#). However, such method, which is implemented in the file \verb#../basisPursuitPlusL2.m# turns out to be unstable and does not converge always (see experiments in \verb#../TestL2.m#). Here, we design a method based on the Barzilai-Borwein algorithm, namely on the method described in~\cite{Birgin00-NonmonotoneSpectralProjectedGradient}.
+	
+	
+	Since the objective of~\eqref{Eq:L1L2SolverProb} is strictly convex, we can solve its dual problem instead:
+	\begin{align}
+		  &\underset{\lambda}{\text{maximize}}\,\,\, b^\top \lambda + \inf_x \Bigl[ \|x\|_1 + \frac{\beta}{2}\|x - w\|^2 - \lambda^\top Ax\Bigr] 
+		\notag
+		\\
+		\Longleftrightarrow\qquad&
+		  \underset{\lambda}{\text{minimize}}\,\,\, -b^\top \lambda + \underbrace{\sup_x \Bigl[\lambda^\top Ax - \|x\|_1 - \frac{\beta}{2}\|x - w\|^2 \Bigr]}_{=: \Psi(\lambda)}\,.	
+		\label{Eq:L1L2SolverDual}
+	\end{align}
+	Note that~\eqref{Eq:L1L2SolverDual} is unconstrained, and its objective is convex, continuously differentiable, and its gradient is Lipschitz continuous. Therefore, we can apply any gradient-based method such as Nesterov's algorithm or Barzilai-Borwein. To compute the gradient of~$\Phi$ and a point~$\lambda$, we need first to find $x(\lambda)$ that minimizes the problem defining~$\Psi$, that is,
+	$$		
+			\underset{x}{\text{minimize}} \,\,\, \|x\|_1 + v^\top x + \frac{\beta}{2}\|x\|^2\,,
+	$$
+	where~$v = -(\beta w + A^\top \lambda)$. This problem decomposes across components in~$x_i$, whose optimality condition is
+	$$
+		0 \in \partial |x_i| + v_ix_i + \frac{\beta}{2}x_i^2\,.
+	$$
+	Let us then find the $i$th component:
+	\begin{itemize}
+		\item If $x_i > 0$, then 
+			$$
+				0 = 1 + v_i + \beta x_i \qquad\Longleftrightarrow\qquad x_i = -\frac{v_i + 1}{\beta}\,.
+			$$
+			And this is positive whenever $v_i < -1$.
+		
+		\item If $x_i < 0$, then
+			$$
+				0 = -1 + v_i + \beta x_i \qquad\Longleftrightarrow\qquad x_i = -\frac{v_i - 1}{\beta}\,.
+			$$
+			And this is negative whenever $v_i > 1$.
+		
+		\item Finally, if $x_i = 0$, then $v_i \in [-1,1]$, which is $|v_i| \leq 1$.
+	\end{itemize}
+	The gradient of the objective of~\eqref{Eq:L1L2SolverDual} at a point~$\lambda$ is $Ax(\lambda) - b$. It can be proven that this gradient is Lipschitz-continuous with constant~$1/\beta$.
+	
+
+	
+	\begin{thebibliography}{9}
+	
+		\bibitem{Birgin00-NonmonotoneSpectralProjectedGradient}
+			E. Birgin, J. Mart\'inez, and M. Raydan,
+			``Nonmonotone Spectral Projected Gradient Methods on Convex Sets''
+			\emph{SIAM J. Optim.}, 
+			vol.\ 10, no.\ 4, pp.\ 1196-1211, 2000.
+	
+	\end{thebibliography}
+
+	
+	
+\end{document}

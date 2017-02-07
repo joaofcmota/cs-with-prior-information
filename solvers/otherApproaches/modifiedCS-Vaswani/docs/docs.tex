@@ -1,0 +1,212 @@
+\documentclass[letter,10pt]{article}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{lmodern}            
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{xcolor}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{epsfig}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{pst-grad}
+\usepackage{ifthen}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{setspace}           
+\usepackage[framed]{ntheorem}
+\usepackage{framed}
+
+\usepackage[letterpaper,
+top=1.2in,
+bottom=1.5in,
+left=1.0in,
+right=1.0in]{geometry}
+
+
+\theoremstyle{definition}
+\newtheorem{Algorithm}{Algorithm}
+\shadecolor{black!10!white}
+\theorembodyfont{\rm\normalfont}
+\theoremindent0cm
+\newshadedtheorem{thm}{Theorem}
+
+\newshadedtheorem{lem}{Lemma}
+\newshadedtheorem{proposition}{Proposition}
+\newshadedtheorem{theorem}{Theorem}
+\newshadedtheorem{Corollary}{Corollary}
+\newshadedtheorem{definition}{Definition}
+\newtheorem{Assumption}{Assumption}
+\newtheorem{Remark}{Remark}
+
+\theoremstyle{nonumberplain}
+\theoremindent0cm
+\newtheorem{proof}{Proof}
+
+\newcommand{\mypar}[1]{\bigskip\noindent {\bf #1.}}
+
+\newcommand\mynote[1]{\mbox{}\marginpar{\footnotesize\raggedright\hspace{0pt}\color{blue}\emph{#1}}}
+
+\newcommand{\qed}{\hfill $\Box$}
+
+\title{Solver for Modified-CS}
+
+\author{Jo\~ao F. C. Mota}
+
+
+\begin{document}
+
+\maketitle
+
+	We solve
+	\begin{equation}\label{Eq:ModifiedCS}
+		\begin{array}{ll}
+			\underset{x}{\text{minimize}} & \|x_{T^c}\|_1 \\
+			\text{subject to} & Ax = b\,,
+		\end{array}
+	\end{equation}
+	where~$A \in \mathbb{R}^{m \times n}$, $b \in \mathbb{R}^m$, and~$T \subseteq \{1,\ldots,n\}$ are given. The set~$T^c$ is the complement of~$T$ in $\{1,\ldots,n\}$, and~$x_{T^c}$ denotes the subvector of~$x \in \mathbb{R}^n$ containing the components of~$x$ that are indexed by~$T^c$. Therefore, $\|x_{T^c}\|_1 = \sum_{i \not \in T}|x_i|$. Problem~\eqref{Eq:ModifiedCS} was proposed in~\cite{Vaswani10-ModifiedCS} and is known as \textit{Modified-CS}.
+	
+	This document describes a solver for~\eqref{Eq:ModifiedCS} that uses the Alternating Direction Method of Multipliers (ADMM)~\cite{Glowinski75-ADMM,Gabay76-ADMM,Boyd11-ADMM}. First, we recast the problem as
+	\begin{equation}\label{Eq:ADMMForm}
+		\begin{array}{ll}
+			\underset{x,y}{\text{minimize}} & f(x) + g(y) \\
+			\text{subject to} & x = y\,,
+		\end{array}
+	\end{equation}
+	where $f(x) = \|x_{T^c}\|_1$ and $g(y) = \text{i}_{\{x\,:\, Ax = b\}}(y)$, where $\text{i}_S(x)$ is the indicator function of the set~$S$, i.e.,
+	$$
+		\text{i}_S(x) = \left\{
+											\begin{array}{ll}
+												0 &,\,\,\text{if $x \in S$} \\
+												+\infty &,\,\, \text{if $x \not\in S$}.
+											\end{array}
+										\right.
+	$$
+	The augmented Lagrangian of~\eqref{Eq:ADMMForm} is
+	$$
+		L_\rho (x,y;\lambda) = f(x) + g(y) + \lambda^\top (x - y) + \frac{\rho}{2} \|x - y\|^2\,,
+	$$
+	and ADMM becomes
+	\begin{align}
+		x^{k+1} &= \underset{x}{\arg\min}\,\,\, f(x) + {\lambda^k}^\top x +\frac{\rho}{2}\|x - y^k\|^2
+		\label{Eq:ADMMx}
+		\\
+		y^{k+1} &= \underset{y}{\arg\min}\,\,\, g(y) - {\lambda^k}^\top y +\frac{\rho}{2}\|x^{k+1} - y\|^2
+		\label{Eq:ADMMy}
+		\\
+		\lambda^{k+1} &= \lambda^k + \rho (x^{k+1} - y^{k+1})\,.
+		\notag
+	\end{align}
+	It turns out that both~\eqref{Eq:ADMMx} and~\eqref{Eq:ADMMy} have closed-form solutions.
+
+	\mypar{Problem in \boldmath{$x$}} Developing the square, problem~\eqref{Eq:ADMMx} is equivalent to
+	\begin{equation}\label{Eq:ADMMx1}
+		x^{k+1} = \underset{x}{\arg\min} \,\,\, f(x) + (\lambda^k - \rho y^k)^\top x + \frac{\rho}{2}\|x\|^2\,.
+	\end{equation}
+	Let $v:= \lambda^k - \rho y^k$. Replacing the expression for function~$f$ in~\eqref{Eq:ADMMx1},
+	\begin{equation}\label{Eq:ADMMx2}
+		x^{k+1} = \underset{x}{\arg\min} \,\,\, \sum_{i \not\in T}|x_i| + v^\top x + \frac{\rho}{2}\|x\|^2\,,
+	\end{equation}
+	whose solution can be computed in closed-form. First note that~\eqref{Eq:ADMMx2} decomposes into~$n$ independent problems. Then if~$i \in T$, we have
+	\begin{align*}
+			x_i^{k+1} 
+		= 
+			\underset{x}{\arg\min} \,\,\, v_i x_i + \frac{\rho}{2}x_i^2
+		\,\,=
+			-\frac{1}{\rho}v_i\,.
+	\end{align*}
+	If~$i \not\in T$, then
+	\begin{align*}
+			x_i^{k+1} 
+		= 
+			\underset{x}{\arg\min} \,\,\, |x_i| + v_i x_i + \frac{\rho}{2}x_i^2
+		\,\,
+		=
+		\left\{
+			\begin{array}{ll}
+				-\frac{1}{\rho}(v_i + 1) &,\,\, v_i < -1
+				\vspace{0.2cm}
+				\\
+				0                        &,\,\, -1\leq v_i \leq 1 
+				\vspace{0.2cm}
+				\\
+				-\frac{1}{\rho}(v_i - 1) &,\,\, v_i > 1\,.
+			\end{array}
+		\right.
+	\end{align*}
+
+	
+	\mypar{Problem in \boldmath{$y$}}
+	Problem~\eqref{Eq:ADMMy} is equivalent to
+	\begin{align*}
+			\begin{array}[t]{cl}
+				\underset{y}{\arg\min} & \frac{\rho}{2} \|y\|^2 - \rho \,{x^{k+1}}^\top y - {\lambda^k}^\top y \\
+				\text{s.t.} & Ay = b
+			\end{array}
+		\qquad
+		&\Longleftrightarrow
+		\qquad
+			\begin{array}[t]{cl}
+				\underset{y}{\arg\min} &  \|y\|^2 - \frac{2}{\rho} (\lambda^k + \rho\, x^{k+1})^\top y \\
+				\text{s.t.} & Ay = b
+			\end{array}
+		\\
+		&\Longleftrightarrow
+		\qquad
+			\begin{array}[t]{cl}
+				\underset{y}{\arg\min} &  \|y - \frac{1}{\rho}(\lambda^k + \rho \, x^{k+1})\|^2 \\
+				\text{s.t.} & Ay = b
+			\end{array}
+	\end{align*}
+	Defining~$z:= (1/\rho)(\lambda^k + \rho\, x^{k+1})$, this is equivalent to projecting a point onto $\{y \,:\, Ay = b\}$:
+	\begin{equation}\label{Eq:Nov20Miny}
+		\begin{array}{ll}
+			\underset{y}{\text{minimize}} & \frac{1}{2}\|y - z\|^2 \\
+			\text{subject to} & Ay = b\,,
+		\end{array}
+	\end{equation}
+	which has the closed-form solution
+	\begin{equation}\label{Eq:SolverPseudoInverse}
+		y^\star = z - A^\top (A A^\top)^{-1}(Az - b)\,.
+	\end{equation}
+	For large-scale problems, or if we only have access to the operations $Ax$ and $A^\top y$ but not to the full matrix~$A$, \eqref{Eq:SolverPseudoInverse} can be computed via the conjugate gradient method.
+	
+	
+	\begin{thebibliography}{9}
+	
+		\bibitem{Vaswani10-ModifiedCS}
+			N. Vaswani, W. Lu,
+			``Modified-CS: Modifying Compressive Sensing for Problems With Partially Known Support,''
+			\emph{IEEE Transaction on Signal Processing}, Vol. 58, No. 9,
+			2010
+		
+		\bibitem{Glowinski75-ADMM}
+			R. Glowinski and A. Marrocco,
+			``Sur l'approximation, par  \'el\'ements finis d'ordre un, et la r\'esolution, par p\'enalisation-dualit\'e, d'une classe de probl\`emes de dirichelet non lin\'eaires,''
+			\emph{Revue Fran\c{c}aise d'Automatique, Informatique, et Recherche Op\'erationelle}, 
+			vol.\ 9, no.\ 2, pp.\ 41-76, 1975.
+			
+		\bibitem{Gabay76-ADMM}
+			D. Gabay and B. Mercier,
+			``A dual algorithm for the solution of nonlinear variational problems via finite element approximations,''
+			\emph{Computers and Mathematics with Applications},
+			vol.\ 2, no.\ 1, pp.\ 17-40,
+			1976
+		
+		\bibitem{Boyd11-ADMM}
+			S. Boyd, N. Parikh, E. Chu, B. Peleato, and J. Eckstein,
+			``Distributed optimization and statistical learning via the alternating method of multipliers,''
+			\emph{Foundations and Trends in Machine Learning}, 
+			vol.\ 3, no.\ 1, pp.\ 1-122,
+			2011
+			
+	
+	\end{thebibliography}
+
+	
+	
+\end{document}

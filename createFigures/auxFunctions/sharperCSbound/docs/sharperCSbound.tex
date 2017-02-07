@@ -1,0 +1,389 @@
+\documentclass[letter,10pt]{article}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{lmodern}             
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{xcolor}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{epsfig}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{pst-grad}
+\usepackage{ifthen}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{setspace}           
+\usepackage[framed]{ntheorem}
+\usepackage{framed}
+\usepackage{cite}
+
+\usepackage[letterpaper,
+top=1.2in,
+bottom=1.5in,
+left=1.0in,
+right=1.0in]{geometry}
+
+
+\allowdisplaybreaks
+
+\theoremstyle{definition}
+\newtheorem{Algorithm}{Algorithm}
+\shadecolor{black!10!white}
+\theorembodyfont{\rm\normalfont}
+\theoremindent0cm
+\newshadedtheorem{thm}{Theorem}
+
+\newshadedtheorem{lem}{Lemma}
+\newshadedtheorem{proposition}{Proposition}
+\newshadedtheorem{theorem}{Theorem}
+\newshadedtheorem{Corollary}{Corollary}
+\newshadedtheorem{definition}{Definition}
+\newshadedtheorem{Assumption}{Assumption}
+\newtheorem{Remark}{Remark}
+
+\theoremstyle{nonumberplain}
+\theoremindent0cm
+\newtheorem{proof}{Proof}
+
+
+%\newcommand{\mypar}[1]{{\bf #1.}}
+\newcommand{\mypar}[1]{\bigskip\noindent {\bf #1.}}
+
+\newcommand\mynote[1]{\mbox{}\marginpar{\footnotesize\raggedright\hspace{0pt}\color{blue}\emph{#1}}}
+
+\newcommand{\qed}{\hfill $\Box$}
+
+
+\title{Sharper Basis Pursuit Bounds}
+
+\author{Jo\~ao F. C. Mota}  
+
+\begin{document}
+
+\maketitle
+
+In this document, we show how to compute a bound for Basis Pursuit (BP) slightly sharper than the one
+in~\cite{Chandrasekaran12-ConvexGeometryLinearInverseProblems}. Our approach is similar to the one in
+section 4.3 of~\cite{Tropp14-LivingOnTheEdge}.
+
+\mypar{Problem statement}
+Let $x^\star \in \mathbb{R}^n$. Suppose we acquire $m$ linear measurements of $x^\star$ as $y = Ax^\star$,
+where $A \in \mathbb{R}^{m\times n}$, and attempt to reconstruct $x^\star$ by solving
+\begin{equation}
+  \label{Eq:BP}
+  \begin{array}[t]{ll}
+    \underset{x}{\text{minimize}} & \|x\|_1 \\
+    \text{subject to}             & Ax = y\,,
+  \end{array}
+\end{equation}
+where $\|x\|_1 := \sum_{i=1}^n |x_i|$ is the $\ell_1$-norm. Assuming that each entry of the matrix $A$ is
+drawn i.i.d.\ from a zero-mean Gaussian distribution with variance $1/m$, our goal is to determine the number of
+measurements $m$ that~\eqref{Eq:BP} requires to reconstruct $x^\star$ with high probability (over the set of
+matrices $A$).
+
+\mypar{A result by Chandrasekaran et al}
+Corollary 3.3 of~\cite{Chandrasekaran12-ConvexGeometryLinearInverseProblems} together with Proposition 3.6
+and Jensen's inequality establish that if
+\begin{itemize}
+  \item 
+    $y = A x^\star$ for $A \in \mathbb{R}^{m\times n}$
+
+  \item 
+    Each entry of $A$ is drawn i.i.d.\ from $\mathcal{N}(0,1/m)$
+
+  \item 
+    $f:\mathbb{R}^n \rightarrow \mathbb{R}$ is a convex function and there holds $0 \not\in f(x^\star)$
+
+  \item 
+    \begin{equation}
+      \label{Eq:GenericReconstructionProblem}
+      \widehat{x} \in 
+      \begin{array}[t]{cl}
+        \underset{x}{\arg\min} & f(x) \\
+        \text{s.t.} & Ax = y
+      \end{array}
+    \end{equation}
+
+  \item 
+    \begin{equation}
+      \label{Eq:BoundChandrasekaranGeneric}
+      m \geq \mathbb{E}_g \Big[\text{dist}\big(g, \text{cone}\, \partial f(x^\star)\big)^2\Big]\,,
+    \end{equation}
+    where $g \sim \mathcal{N}(0, I_n)$ is a vector of independent Normal entries and $\text{dist}(x, C) =
+    \arg\min_z \{\|z - x\|^2\,:\, z \in C\}$ is the distance of a point $x$ to a set $C$ then, with
+    probability at least $1 - \exp\big(-\frac{1}{2}(m - \sqrt{m})^2\big)$, $\widehat{x}$ is the unique
+    solution of~\eqref{Eq:GenericReconstructionProblem} and equals $x^\star$.
+\end{itemize}
+Since the distance of a point to $\text{cone}\, \partial f(x^\star) = \{t d\,:\, d \in \partial
+f(x^\star),\, t\geq 0\}$ does not usually have a closed-form expression, we will use instead
+\begin{equation}
+  \label{Eq:BoundChandrasekaranGeneric2}
+  m 
+  \geq 
+  \underset{t\geq 0}{\min} \,\,\, \mathbb{E}_g \Big[\text{dist}\big(g, t\, \partial f(x^\star)\big)^2\Big]\,.
+\end{equation}
+It is clear that~\eqref{Eq:BoundChandrasekaranGeneric2} implies~\eqref{Eq:BoundChandrasekaranGeneric}.
+In this document, we show how to compute the right-hand side of~\eqref{Eq:BoundChandrasekaranGeneric2}
+numerically for $f(x) = \|x\|_1$. Our method is a variant of the method in~\cite{Tropp14-LivingOnTheEdge}
+and should give similar results.
+
+\mypar{Some notation}
+In our computations below, we will denote the support of $x^\star$ and its complement on $\{1,\ldots, n\}$
+with
+\begin{align*}
+  I &:= \{i\,:\, x_i^\star \neq 0\}
+  &
+  I^c &:= \{i\,:\, x_i^\star = 0\}\,,
+\end{align*}
+respectively. The cardinality of $I$ or, in other words, the sparsity of $x^\star$ will be denoted with
+$s:= |I|$. We will also make use of the $Q$-function, defined as
+\begin{equation*}
+  Q(x) := \frac{1}{\sqrt{2\pi}} \int_{x}^{+\infty} \exp\Big(-\frac{g^2}{2}\Big)\,\text{d}g\,.
+\end{equation*}
+Using Leibniz rule, it can be checked that the derivative of the $Q$-function at a point $x$ is given by
+\begin{equation}
+  \label{Eq:DerivativeQFunction}
+  \frac{d}{dx}Q(x) = -\frac{1}{\sqrt{2\pi}}\exp\Big(-\frac{x^2}{2}\Big)\,.
+\end{equation}
+
+
+\mypar{Sample complexity of Basis Pursuit}
+The subgradient of $f(x) = \|x\|_1$ at $x^\star$ is
+\begin{equation*}
+  \partial \|x^\star\|_1
+  =
+  \Big(\partial |x_1^\star|,\, \partial |x_2^\star|,\, \ldots,\, \partial |x_n^\star|\Big)\,,
+\end{equation*}
+where
+\begin{equation*}
+  \partial |x_i^\star|
+  =
+  \left\{
+    \begin{array}{ll}
+      \text{sign}(x_i^\star) &,\,\, \text{if $i \in I$} \vspace{0.1cm}\\
+      \big[-1, 1\big]        &,\,\, \text{if $i \in I^c$}
+    \end{array}
+  \right.
+\end{equation*}
+Recall that we are using the following notation: for a given set $S$ and a scalar $t$, $t\,S := \{t\,
+s\,:\, s \in S\}$. We can now compute the right-hand side of~\eqref{Eq:BoundChandrasekaranGeneric2} for $f(x) = \|x\|_1$:
+\begin{equation}
+  \label{Eq:ExpectedDistanceToCone}
+    \underset{t\geq 0}{\min} 
+    \,\,\, 
+    \mathbb{E}_g \Big[\text{dist}\big(g, t\, \partial f(x^\star)\big)^2\Big]
+  =
+    \underset{t\geq 0}{\min}
+    \,\,
+    \Bigg\{
+      \sum_{i\in I} 
+      \mathbb{E}_g\Big[ \text{dist}\big(g_i\,,\,t\,\text{sign}(x_i^\star) \big)^2 \Big]
+      +
+      \sum_{i\in I^c}
+      \mathbb{E}_g\Big[ \text{dist}\big(g_i\,,\,\big[-t,t\big]\big)^2 \Big]
+    \Bigg\}\,.
+\end{equation}
+The first term on the right-hand side of~\eqref{Eq:ExpectedDistanceToCone} can be computed in closed-form:
+\begin{align}
+    \sum_{i\in I}\mathbb{E}_g\Big[ \text{dist}\big(g_i\,,\,t\,\text{sign}(x_i^\star) \big)^2 \Big]
+  &=
+    \sum_{i \in I} \mathbb{E}_g\Big[ \big(g_i - t\, \text{sign}(x_i^\star)\big)^2\Big]
+    =
+    \sum_{i \in I} 
+    \Big(
+      \mathbb{E}_g\big[ g_i^2\big] 
+      -
+      t\,\text{sign}(x_i^\star)\,\mathbb{E}_g\big[ g_i\big] 
+      +
+      t^2
+    \Big)
+  \notag
+  \\
+  &=
+   \sum_{i \in I} \big(1 + t^2\big)
+  \notag
+  \\
+  &=
+    s + s\, t^2\,,
+  \label{Eq:ComputationExpectedValueFirstTerm}
+\end{align}
+where we used the linearity of the expected value and the fact that $g_i$ is a random variable with Normal
+distribution.
+
+The second term of~\eqref{Eq:ExpectedDistanceToCone} does not have a closed-form expression, but we can
+express it as a function of the $Q$-function:
+\begin{align}
+    \sum_{i\in I^c}&\,\mathbb{E}_g\Big[ \text{dist}\big(g_i\,,\,\big[-t,t\big]\big)^2 \Big]
+  \notag
+  \\
+  &=
+    \sum_{i\in I^c} \frac{2}{\sqrt{2\pi}}
+    \int_{t}^{+\infty} (u - t)^2 \exp\Big(-\frac{u^2}{2}\Big)\,\text{d}u
+  \notag
+  \\
+  &=
+    \sum_{i\in I^c} \frac{2}{\sqrt{2\pi}}
+    \bigg[
+      \int_{t}^{+\infty} u^2\exp\Big(-\frac{u^2}{2}\Big)
+      -
+      2t\int_{t}^{+\infty} u\exp\Big(-\frac{u^2}{2}\Big)
+      +
+      t^2\int_{t}^{+\infty} \exp\Big(-\frac{u^2}{2}\Big)
+    \bigg]
+  \label{Eq:ComputationExpectedValueSecondTermAux1}
+  \\
+  &=
+    \sum_{i\in I^c} \frac{2}{\sqrt{2\pi}}
+    \bigg[
+      t\exp\Big(-\frac{t^2}{2}\Big)
+      -
+      2t\int_{t}^{+\infty} u\exp\Big(-\frac{u^2}{2}\Big)
+      +
+      \big(1+t^2\big)\int_{t}^{+\infty} \exp\Big(-\frac{u^2}{2}\Big)
+    \bigg]
+  \label{Eq:ComputationExpectedValueSecondTermAux2}
+  \\
+  &=
+    \sum_{i\in I^c} \frac{2}{\sqrt{2\pi}}
+    \bigg[
+      \big(1+t^2\big)\int_{t}^{+\infty} \exp\Big(-\frac{u^2}{2}\Big)
+      -
+      t\exp\Big(-\frac{t^2}{2}\Big)
+    \bigg]
+  \label{Eq:ComputationExpectedValueSecondTermAux3}
+  \\
+  &=
+    2(n-s)\big(1 + t^2\big)Q(t)
+    -
+    \frac{2(n-s)}{\sqrt{2\pi}}\,t\,\exp\Big(-\frac{t^2}{2}\Big)\,.
+  \label{Eq:ComputationExpectedValueSecondTerm}
+\end{align}
+From~\eqref{Eq:ComputationExpectedValueSecondTermAux1}
+to~\eqref{Eq:ComputationExpectedValueSecondTermAux2}, we integrated the first term by parts:
+\begin{equation*}
+  \int_{t}^{+\infty}u^2\exp\Big(-\frac{u^2}{2}\Big)\, \text{d}u
+  =
+  \bigg[-u\exp\Big(-\frac{u^2}{2}\Big)\bigg]_{t}^{+\infty}
+  +
+  \int_{t}^{+\infty}\exp\Big(-\frac{u^2}{2}\Big)\, \text{d}u
+  =
+  t\, \exp\Big(-\frac{t^2}{2}\Big) + \int_{t}^{+\infty}\exp\Big(-\frac{u^2}{2}\Big)\, \text{d}u\,.
+\end{equation*}
+From~\eqref{Eq:ComputationExpectedValueSecondTermAux2}
+to~\eqref{Eq:ComputationExpectedValueSecondTermAux3}, we computed the integral in the second term:
+\begin{equation*}
+  \int_{t}^{+\infty}u\exp\Big(-\frac{u^2}{2}\Big)\, \text{d}u 
+  =
+  \bigg[-\exp\Big(-\frac{u^2}{2}\Big)\bigg]_{t}^{+\infty}
+  =
+  \exp\Big(-\frac{t^2}{2}\Big)\,.
+\end{equation*}
+Using~\eqref{Eq:ComputationExpectedValueFirstTerm} and~\eqref{Eq:ComputationExpectedValueSecondTerm}
+in~\eqref{Eq:ExpectedDistanceToCone}, we obtain
+\begin{align}
+    \underset{t\geq 0}{\min} 
+    \,\,\, 
+    \mathbb{E}_g \Big[\text{dist}\big(g, t\, \partial f(x^\star)\big)^2\Big]
+  &=
+    \underset{t\geq 0}{\min} 
+    \,\,\, 
+    s + s\,t^2
+    +
+    2(n-s)\big(1 + t^2\big)Q(t)
+    -
+    \frac{2(n-s)}{\sqrt{2\pi}}\,t\,\exp\Big(-\frac{t^2}{2}\Big)
+  =:
+    \underset{t\geq 0}{\min} 
+    \,\,\, 
+    h(t)\,,
+  \label{Eq:OptimizationProblemFort}
+\end{align}
+where
+\begin{equation*}
+    h(t)
+  :=
+    s + s\,t^2
+    +
+    2(n-s)\big(1 + t^2\big)Q(t)
+    -
+    \sqrt{\frac{2}{\pi}}(n-s)\,t\,\exp\Big(-\frac{t^2}{2}\Big)\,.
+\end{equation*}
+We now compute the first- and second-order derivatives of $h(t)$ and check that $h(t)$ is convex. There holds
+\begin{align*}
+    \frac{d}{dt}h(t)
+  &=
+    2st + 4(n - s)\,t\,Q(t) + 2(n - s)\big(1 + t^2\big)\frac{d}{dt}Q(t)
+    - \sqrt{\frac{2}{\pi}}(n-s)\,\exp\Big(-\frac{t^2}{2}\Big)
+    + \sqrt{\frac{2}{\pi}}(n-s)\,t^2\,\exp\Big(-\frac{t^2}{2}\Big)
+  \\
+  &=
+    2st + 4(n - s)\,t\,Q(t) + 2(n - s)\big(1 + t^2\big)\frac{d}{dt}Q(t)
+    + \big(t^2 - 1\big)\sqrt{\frac{2}{\pi}}(n-s)\,\exp\Big(-\frac{t^2}{2}\Big)
+  \\
+  &=
+    2st + 4(n - s)\,t\,Q(t) - \big(t^2 + 1\big)\sqrt{\frac{2}{\pi}}(n - s)\exp\Big(-\frac{t^2}{2}\Big)
+    + \big(t^2 - 1\big)\sqrt{\frac{2}{\pi}}(n-s)\,\exp\Big(-\frac{t^2}{2}\Big)
+  \\
+  &=
+    2st + 4(n - s)\,t\,Q(t) - 2(n - s)\sqrt{\frac{2}{\pi}}\exp\Big(-\frac{t^2}{2}\Big)
+  \\
+    \frac{d^2}{dt^2}h(t)
+  &=
+    2s + 4(n - s)Q(t) + 4(n - s)t\frac{d}{dt}Q(t) 
+    +
+    2(n - s)\sqrt{\frac{2}{\pi}}\,t\,\exp\Big(-\frac{t^2}{2}\Big)
+  \\
+  &=
+    2s + 4(n - s)Q(t) 
+    -
+    2(n - s)\sqrt{\frac{2}{\pi}}\,t\,\exp\Big(-\frac{t^2}{2}\Big)
+    +
+    2(n - s)\sqrt{\frac{2}{\pi}}\,t\,\exp\Big(-\frac{t^2}{2}\Big)
+  \\
+  &=
+    2s + 4(n - s)Q(t) \,.
+\end{align*}
+Since $Q(t)> 0$ for all $t$, $h(t)$ is strictly convex. To solve~\eqref{Eq:OptimizationProblemFort}, we can
+apply Newton-Raphson's method to solve $\frac{d h}{dt}(t) = 0$:
+\begin{equation}
+  \label{Eq:NewtonRaphson}
+  t^{k+1} = t^k - \frac{\dot{h}\big(t^k\big)}{\ddot{h}\big(t^k\big)}\,,
+\end{equation}
+where $\dot{h} := \frac{dh}{dt}$ and $\ddot{h} := \frac{dh^2}{dt^2}$. Note that we are not projecting each
+iterate onto $t\geq 0$. In fact, the zero $t^\star$ of $\dot{h}$ is always positive. To see
+why, note that $\dot{h}(0) = -2(n-s)\sqrt{2/\pi}<0$ and $\lim_{t\rightarrow +\infty} \dot{h}(t) =
++\infty$. Given that $\ddot{h}(t) \geq 0$ for all $t$, it means that $t^\star > 0$. Hence, the constrained
+problem in~\eqref{Eq:OptimizationProblemFort} is equivalent to the one we obtain by removing the constraint
+$t\geq 0$. A good starting point is $t^0 = \sqrt{2\log(n/s)}$. 
+
+\mypar{Implementation issues}
+In some computational platforms, we have access not to the $Q$-function, but to the complementary error
+function
+\begin{equation*}
+  \text{erfc}(x) := \frac{2}{\sqrt{\pi}}\int_{x}^{+\infty} \exp\big(-u^2\big)\, \text{d}u\,.
+\end{equation*}
+By a simple change of variables, we can check that
+\begin{align*}
+    Q(x)
+  &=
+    \frac{1}{\sqrt{2\pi}}\int_{x}^{+\infty}\exp\Big(-\frac{g^2}{2}\Big)\, \text{d}g
+    =
+    \frac{1}{\sqrt{\pi}}\int_{\frac{x}{\sqrt{2}}}^{+\infty}\exp\big(-u^2\big)\, \text{d}u
+  \\
+  &=
+  \frac{1}{2}\text{erfc}\Big(\frac{x}{\sqrt{2}}\Big)\,.
+\end{align*}
+
+%\pagebreak
+\bibliographystyle{IEEEtran}
+% Filename .bib without extension
+\bibliography{sharperCSbound}
+
+\end{document}
+
+

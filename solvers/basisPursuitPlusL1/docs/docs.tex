@@ -1,0 +1,273 @@
+\documentclass[letter,10pt]{article}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{lmodern}            
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{xcolor}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{epsfig}
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{pst-grad}
+\usepackage{ifthen}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{setspace}           
+\usepackage[framed]{ntheorem}
+\usepackage{framed}
+
+\usepackage[letterpaper,
+top=1.2in,
+bottom=1.5in,
+left=1.0in,
+right=1.0in]{geometry}
+
+
+\theoremstyle{definition}
+\newtheorem{Algorithm}{Algorithm}
+\shadecolor{black!10!white}
+\theorembodyfont{\rm\normalfont}
+\theoremindent0cm
+\newshadedtheorem{thm}{Theorem}
+
+\newshadedtheorem{lem}{Lemma}
+\newshadedtheorem{proposition}{Proposition}
+\newshadedtheorem{theorem}{Theorem}
+\newshadedtheorem{Corollary}{Corollary}
+\newshadedtheorem{definition}{Definition}
+\newtheorem{Assumption}{Assumption}
+\newtheorem{Remark}{Remark}
+
+\theoremstyle{nonumberplain}
+\theoremindent0cm
+\newtheorem{proof}{Proof}
+
+\newcommand{\mypar}[1]{\bigskip\noindent {\bf #1.}}
+
+\newcommand\mynote[1]{\mbox{}\marginpar{\footnotesize\raggedright\hspace{0pt}\color{blue}\emph{#1}}}
+
+\newcommand{\qed}{\hfill $\Box$}
+
+\title{Solver for $\ell_1$ plus $\ell_1$ minimization}
+
+\author{Jo\~ao F. C. Mota}
+
+
+\begin{document}
+
+\maketitle
+
+	We address
+	\begin{equation}\label{Eq:Nov20OriginalProblem}
+		\begin{array}{ll}
+			\underset{x}{\text{minimize}} & \|x\|_1 + \beta \|x - w\|_1 \\
+			\text{subject to} & Ax = b\,,
+		\end{array}
+	\end{equation}
+	where~$A \in \mathbb{R}^{m \times n}$, $b \in \mathbb{R}^m$, $w \in \mathbb{R}^n$, and $\beta > 0$ are given. The algorithm described here was designed to create the results in~\cite{Mota14-CompressedSensingPriorInfo}. We solve~\eqref{Eq:Nov20OriginalProblem} with the Alternating Direction Method of Multipliers (ADMM)~\cite{Glowinski75-ADMM,Gabay76-ADMM,Boyd11-ADMM}, because each subproblem will have closed-form solutions, which will imply a fast algorithm. First, we recast the problem as
+	\begin{equation}\label{Eq:Nov20ADMM1}
+		\begin{array}{ll}
+			\underset{x,y}{\text{minimize}} & f(x) + g(y) \\
+			\text{subject to} & x = y\,,
+		\end{array}
+	\end{equation}
+	where $f(x) = \|x\|_1 + \beta \|x - w\|_1$ and $g(y) = \text{i}_{\{x\,:\, b = Ax\}}(y)$, where $\text{i}_S(x)$ is the indicator function of the set~$S$, i.e.,
+	$$
+		\text{i}_S(x) = \left\{
+											\begin{array}{ll}
+												0 &,\,\,\text{if $x \in S$} \\
+												+\infty &,\,\, \text{if $x \not\in S$}.
+											\end{array}
+										\right.
+	$$
+	The augmented Lagrangian of~\eqref{Eq:Nov20ADMM1} is
+	$$
+		L_\rho (x,y;\lambda) = f(x) + g(y) + \lambda^\top (x - y) + \frac{\rho}{2} \|x - y\|^2\,,
+	$$
+	and ADMM becomes
+	\begin{align}
+		x^{k+1} &= \underset{x}{\arg\min}\,\,\, f(x) + {\lambda^k}^\top x +\frac{\rho}{2}\|x - y^k\|^2
+		\label{Eq:Nov20ADMMx}
+		\\
+		y^{k+1} &= \underset{y}{\arg\min}\,\,\, g(y) - {\lambda^k}^\top y +\frac{\rho}{2}\|x^{k+1} - y\|^2
+		\label{Eq:Nov20ADMMy}
+		\\
+		\lambda^{k+1} &= \lambda^k + \rho (x^{k+1} - y^{k+1})\,.
+		\notag
+	\end{align}
+	It turns out that both~\eqref{Eq:Nov20ADMMx} and~\eqref{Eq:Nov20ADMMy} have closed-form solutions.
+
+	\mypar{Problem in \boldmath{$x$}} Developing the square, problem~\eqref{Eq:Nov20ADMMx} is equivalent to
+	\begin{equation}\label{Eq:Nov20ADMMx1}
+		x^{k+1} = \underset{x}{\arg\min} \,\,\, f(x) + (\lambda^k - \rho y^k)^\top x + \frac{\rho}{2}\|x\|^2\,.
+	\end{equation}
+	Let $v:= \lambda^k - \rho y^k$. Replacing the expression for function~$f$ in~\eqref{Eq:Nov20ADMMx1},
+	\begin{align*}
+		x^{k+1} = \underset{x}{\arg\min} \,\,\, \|x\|_1 + \beta \|x - w\|_1 + v^\top x + \frac{\rho}{2}\|x\|^2\,,
+	\end{align*}
+	whose~$i$th component is given by
+	\begin{equation}\label{Eq:Nov20ADMMx2}
+		x_i^{k+1} = \underset{x_i}{\arg\min} \,\,\, |x_i| + \beta |x_i - w_i| + v_i x_i + \frac{\rho}{2}x_i^2\,.
+	\end{equation}
+	To find the solution of~\eqref{Eq:Nov20ADMMx2} in closed-form, we need to consider the following cases:
+	\begin{itemize}
+		\item $w_i > 0$:
+
+		\begin{itemize}
+			\item $x_i < 0$: the optimality conditions in this case are
+			\begin{align*}
+				0 = -1 - \beta + v_i + \rho x_i
+				\quad \Longleftrightarrow\quad
+				x_i = \frac{1}{\rho}\Bigl(\beta + 1 - v_i\Bigr)\,,
+			\end{align*}
+			which hold when $v_i > \beta + 1$.
+
+			\item $0 <x_i < w_i$:
+			\begin{align*}
+				0 = 1 - \beta + v_i + \rho x_i
+				\quad\Longleftrightarrow\quad
+				x_i = \frac{1}{\rho}\Bigl(\beta - 1 - v_i\Bigr)\,,
+			\end{align*}
+			which hold when $-\rho w_i  + \beta -1 < v_i < \beta - 1$.
+
+			\item $x_i > w_i$:
+			\begin{align*}
+				0 = 1 + \beta + v_i + \rho x_i
+				\quad \Longleftrightarrow\quad
+				x_i = \frac{1}{\rho}\Bigl(-\beta - 1 - v_i\Bigr)\,,
+			\end{align*}
+			which holds when $v_i < -\rho w_i - \beta - 1$.
+
+		\end{itemize}
+		We then have, for $w_i >0$,
+			$$
+				x_i^\star
+				=
+				\left\{
+					\begin{array}{ll}
+						\frac{1}{\rho}(-\beta - 1 - v_i) &,\,\, v_i < -\rho w_i - \beta - 1 \vspace{0.1cm}\\
+						w_i &,\,\, -\rho w_i - \beta - 1 \leq v_i \leq -\rho w_i + \beta - 1 \vspace{0.1cm}\\
+						\frac{1}{\rho}(\beta - 1 - v_i) &,\,\, -\rho w_i  + \beta -1 < v_i < \beta - 1 \vspace{0.1cm}\\
+						0  &,\,\, \beta - 1 \leq v_i \leq \beta + 1 \vspace{0.1cm}\\
+						\frac{1}{\rho}(\beta + 1 - v_i) &,\,\, v_i > \beta + 1\,.
+					\end{array}
+				\right.
+			$$
+
+	\item $w_i < 0$:
+
+		\begin{itemize}
+			\item $x_i < w_i$: the optimality conditions are
+				$$
+					0 = -1 - \beta + v_i + \rho x_i
+					\quad\Longleftrightarrow\quad
+					x_i = \frac{1}{\rho}\Bigl(\beta + 1 - v_i\Bigr)\,,
+				$$
+				which holds when $v_i > -\rho w_i + \beta + 1$.
+
+			\item $w_i < x_i < 0$:
+				$$
+					0 = -1 + \beta + v_i + \rho x_i
+					\quad\Longleftrightarrow\quad
+					x_i = \frac{1}{\rho}\Bigl(-\beta + 1 - v_i\Bigr)\,,
+				$$
+				which holds when $-\beta + 1 < v_i < -\rho w_i - \beta + 1$.
+
+			\item $x_i > 0$:
+				$$
+					0 = 1 + \beta + v_i + \rho x_i
+					\quad\Longleftrightarrow\quad
+					x_i = \frac{1}{\rho}\Bigl(-\beta - 1 - v_i\Bigr)\,,
+				$$
+				which holds when $v_i < -\beta -1$.
+		\end{itemize}
+		We then have, for $w_i < 0$,
+		$$
+			x_i^\star =
+			\left\{
+				\begin{array}{ll}
+					\frac{1}{\rho}(-\beta - 1 - v_i) &,\,\, v_i < -\beta -1 \vspace{0.1cm}\\
+					0                                &,\,\, -\beta -1 \leq v_i \leq -\beta + 1 \vspace{0.1cm}\\
+					\frac{1}{\rho}(-\beta + 1 - v_i) &,\,\, -\beta + 1 < v_i <-\rho w_i -\beta +1\vspace{0.1cm}\\
+					w_i   &,\,\, -\rho w_i -\beta +1 \leq v_i \leq -\rho w_i +\beta +1 \vspace{0.1cm}\\
+					\frac{1}{\rho}(\beta + 1 - v_i) &,\,\, v_i> -\rho w_i + \beta + 1\,.
+				\end{array}
+			\right.
+		$$
+	\end{itemize}
+
+
+	\mypar{Problem in \boldmath{$y$}}
+	Problem~\eqref{Eq:Nov20ADMMy} is equivalent to
+	\begin{align*}
+			\begin{array}[t]{cl}
+				\underset{y}{\arg\min} & \frac{\rho}{2} \|y\|^2 - \rho \,{x^{k+1}}^\top y - {\lambda^k}^\top y \\
+				\text{s.t.} & Ay = b
+			\end{array}
+		\qquad
+		&\Longleftrightarrow
+		\qquad
+			\begin{array}[t]{cl}
+				\underset{y}{\arg\min} &  \|y\|^2 - \frac{2}{\rho} (\lambda^k + \rho\, x^{k+1})^\top y \\
+				\text{s.t.} & Ay = b
+			\end{array}
+		\\
+		&\Longleftrightarrow
+		\qquad
+			\begin{array}[t]{cl}
+				\underset{y}{\arg\min} &  \|y - \frac{1}{\rho}(\lambda^k + \rho \, x^{k+1})\|^2 \\
+				\text{s.t.} & Ay = b
+			\end{array}
+	\end{align*}
+	Defining~$z:= (1/\rho)(\lambda^k + \rho\, x^{k+1})$, this is equivalent to projecting a point onto $\{y \,:\, Ay = b\}$:
+	\begin{equation}\label{Eq:Nov20Miny}
+		\begin{array}{ll}
+			\underset{y}{\text{minimize}} & \frac{1}{2}\|y - z\|^2 \\
+			\text{subject to} & Ay = b\,,
+		\end{array}
+	\end{equation}
+	which has the closed-form solution
+	\begin{equation}\label{Eq:SolverPseudoInverse}
+		y^\star = z - A^\top (A A^\top)^{-1}(Az - b)\,.
+	\end{equation}
+	For large-scale problems, or if we only have access to the operations $Ax$ and $A^\top y$ but not to the full matrix~$A$, \eqref{Eq:SolverPseudoInverse} can be computed via the conjugate gradient method.
+	
+	
+	\begin{thebibliography}{9}
+	
+		\bibitem{Mota14-CompressedSensingPriorInfo}
+			J. Mota, N. Deligiannis, M. Rodrigues,
+			``Compressed Sensing with Prior Information: Optimal Strategies, Geometry, and Bounds,''
+			\emph{submitted to IEEE Transaction on Information Theory}, preprint: \url{http://arxiv.org/abs/1408.5250}
+			2014
+		
+		\bibitem{Glowinski75-ADMM}
+			R. Glowinski and A. Marrocco,
+			``Sur l'approximation, par  \'el\'ements finis d'ordre un, et la r\'esolution, par p\'enalisation-dualit\'e, d'une classe de probl\`emes de dirichelet non lin\'eaires,''
+			\emph{Revue Fran\c{c}aise d'Automatique, Informatique, et Recherche Op\'erationelle}, 
+			vol.\ 9, no.\ 2, pp.\ 41-76, 1975.
+			
+		\bibitem{Gabay76-ADMM}
+			D. Gabay and B. Mercier,
+			``A dual algorithm for the solution of nonlinear variational problems via finite element approximations,''
+			\emph{Computers and Mathematics with Applications},
+			vol.\ 2, no.\ 1, pp.\ 17-40,
+			1976
+		
+		\bibitem{Boyd11-ADMM}
+			S. Boyd, N. Parikh, E. Chu, B. Peleato, and J. Eckstein,
+			``Distributed optimization and statistical learning via the alternating method of multipliers,''
+			\emph{Foundations and Trends in Machine Learning}, 
+			vol.\ 3, no.\ 1, pp.\ 1-122,
+			2011
+			
+	
+	\end{thebibliography}
+
+	
+	
+\end{document}
