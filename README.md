@@ -1,63 +1,64 @@
-# cs-with-prior-information
-This software provides a Matlab implementation of solvers for the L1-L1 and L1-L2 
-minimization problems, as described in
+# Compressed Sensing with Prior Information: Optimal Strategies, Geometry, and Bounds
 
-[1] J. F. C. Mota, N. Deligiannis, M. R. D. Rodrigues
-    "Compressed Sensing with Prior Information: Optimal Strategies, Geometry, and
-    Bounds"
-    submitted to IEEE Transactions on Information Theory, 2014
-    arXiv: http://arxiv.org/abs/1408.5250
+Matlab solvers for L1-L1 minimization:
+
+<center>
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b,&space;\end{array}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\beta&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x\|_1 + \beta\|x - \overline{x}\|_1 \\ \text{subject to} & Ax = b, \end{array}" /></a>
+</center>
+
+L1-L2 minimization:
+
+<center>
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\|x&space;-&space;\overline{x}\|_2^2&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b,&space;\end{array}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\beta&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x\|_1 + \beta\|x - \overline{x}\|_2^2 \\ \text{subject to} & Ax = b, \end{array}" /></a>
+</center>
+
+and also for Modified-CS:
+
+<center>
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x_{T^c}\|_1\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b\,.&space;\end{array}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x_{T^c}\|_1\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b\,,&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x_{T^c}\|_1\\ \text{subject to} & Ax = b\,. \end{array}" /></a>
+</center>
+
+The first two problems are analyzed in
+
+1. **[Compressed Sensing with Prior Information: Strategies, Geometry, and Bounds](
+    https://doi.org/10.1109/TIT.2017.2695614)**.  
+    J. F. C. Mota, N. Deligiannis, M. R. D. Rodrigues.  
+    IEEE Transactions on Information Theory, Vol. 63, No. 7, pp. 4472-4496, 2017.  
+    [link](https://doi.org/10.1109/TIT.2017.2695614), 
+    [arXiv](http://arxiv.org/abs/1408.5250)
 
 and 
 
-[2] J. F. C. Mota, N. Deligiannis, M. R. D. Rodrigues
-    "Compressed Sensing with Side Information: Geometrical Interpretation and 
-    Performance Bounds"
-    IEEE Global Conf. on Signal and Information Processing (GlobalSIP), pp. 
-    512-516, 2014
+2. **[Compressed Sensing with Side Information: Geometrical Interpretation and Performance Bounds](
+    http://dx.doi.org/10.1109/GlobalSIP.2014.7032170 )**.  
+  **J. F. C. Mota**, N. Deligiannis, M. Rodrigues.  
+  IEEE Global Conference on Signal and Information Processing (GlobalSIP),
+  Atlanta, 2014. 
+  *Session: Information Processing for Big Data.*   
+  [link]( http://dx.doi.org/10.1109/GlobalSIP.2014.7032170 ), 
+  [arXiv]( http://arxiv.org/abs/1410.2724 )
 
-It also provides code to reproduce the Figures in [1], and a solver for 
-Modified-CS, a problem proposed in
+and Modified-CS was proposed in
 
-[3] N. Vaswani, W. Lu
-    "Modified-CS: Modifying Compressive Sensing for Problems With Partially Known 
-    Support"
-    IEEE Transactions on Signal Processing, Vol. 58, No. 9, 2010
+3. **[Modified-CS: Modifying Compressive Sensing for Problems With Partially Known Support](
+    https://ieeexplore.ieee.org/abstract/document/5471173/)**.  
+    N. Vaswani, W. Lu.  
+    IEEE Transactions on Signal Processing, Vol. 58, No. 9, 2010.  
+    [link](https://ieeexplore.ieee.org/abstract/document/5471173/)
 
-------------
-Organization
-------------
+This page also contains code to reproduce the experiments and figures in [1].
 
-*solvers*: contains code for 
+## Organization
 
-* L1-L1 minimization
+* solvers: 
+  Code for L1-L1 minimization,  L1-L2 minimization, Modified-CS
 
-* L1-L2 minimization
+  Each folder contains a detailed derivation of the implemented algorithm.
 
-* Modified-CS
+* createFigures: 
+  Reproduce the figures in [1].
 
-Each folder contains a detailed derivation of the implemented algorithm.
+---
 
-*createFigures*: contains code to reproduce the figures in [1].
-
-If you use this code, please cite [1] and/or [2].
-
-
--------
-License
--------
-
-Copyright (C) 2017  Joao Mota
-
-This program is free software: you can redistribute it and/or modify it under the 
-terms of the GNU General Public License as published by the Free Software 
-Foundation, either version 3 of the License, or (at your option) any later 
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
-PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this
-program.  If not, see <http://www.gnu.org/licenses/>.
+License: [ GPLv3 ]( https://www.gnu.org/licenses/gpl-3.0.en.html )
 
