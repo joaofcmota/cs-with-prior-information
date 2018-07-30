@@ -1,6 +1,6 @@
 # Compressed Sensing with Prior Information: Optimal Strategies, Geometry, and Bounds
 
-Matlab solvers for <img src="https://github.com/joaofcmota/cs-with-prior-information/svgs/839a0dc412c4f8670dd1064e0d6d412f.svg" align=middle width=13.40191379999999pt height=22.831056599999986pt/>-<img src="https://github.com/joaofcmota/cs-with-prior-information/svgs/839a0dc412c4f8670dd1064e0d6d412f.svg" align=middle width=13.40191379999999pt height=22.831056599999986pt/> minimization:
+Matlab solvers for <img src="svgs/839a0dc412c4f8670dd1064e0d6d412f.svg" align=middle width=13.40191379999999pt height=22.831056599999986pt/>-<img src="https://github.com/joaofcmota/cs-with-prior-information/svgs/839a0dc412c4f8670dd1064e0d6d412f.svg" align=middle width=13.40191379999999pt height=22.831056599999986pt/> minimization:
 
 <p align="center"><img src="https://github.com/joaofcmota/cs-with-prior-information/svgs/e446878229a2485dddbb4998ee40660f.svg" align=middle width=213.5559888pt height=40.84012515pt/></p>
 
