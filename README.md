@@ -2,19 +2,21 @@
 
 Matlab solvers for L1-L1 minimization:
 
-<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b,&space;\end{array}" target="_blank" text-align:center;> <img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\beta&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x\|_1 + \beta\|x - \overline{x}\|_1 \\ \text{subject to} & Ax = b, \end{array}" /></a>
+<div style="text-align: center;">
+<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b,&space;\end{array}" target="_blank"> <img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\beta&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x\|_1 + \beta\|x - \overline{x}\|_1 \\ \text{subject to} & Ax = b, \end{array}" /></a>
+</div>
 
 L1-L2 minimization:
 
-<center>
+<div style="text-align: center;">
 <a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\|x&space;-&space;\overline{x}\|_2^2&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b,&space;\end{array}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\beta&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x\|_1 + \beta\|x - \overline{x}\|_2^2 \\ \text{subject to} & Ax = b, \end{array}" /></a>
-</center>
+</div>
 
 and also for Modified-CS:
 
-<center>
+<div style="text-align: center;">
 <a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x_{T^c}\|_1\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b\,.&space;\end{array}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x_{T^c}\|_1\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b\,,&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x_{T^c}\|_1\\ \text{subject to} & Ax = b\,. \end{array}" /></a>
-</center>
+</div>
 
 The first two problems are analyzed in
 
@@ -49,12 +51,10 @@ This page also contains code to reproduce the experiments and figures in [1].
 ## Organization
 
 * solvers: 
-  Code for L1-L1 minimization,  L1-L2 minimization, Modified-CS
+  code for L1-L1 minimization,  L1-L2 minimization, Modified-CS. 
+  Each folder contains a detailed derivation of the respective algorithm.
 
-  Each folder contains a detailed derivation of the implemented algorithm.
-
-* createFigures: 
-  Reproduce the figures in [1].
+* createFigures: code for reproducing the figures in [1].
 
 ---
 
