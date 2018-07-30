@@ -1,20 +1,16 @@
 # Compressed Sensing with Prior Information: Optimal Strategies, Geometry, and Bounds
 
-Matlab solvers for L1-L1 minimization:
+Matlab solvers for <img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/839a0dc412c4f8670dd1064e0d6d412f.svg?invert_in_darkmode" align=middle width=13.40191379999999pt height=22.831056599999986pt/>-<img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/839a0dc412c4f8670dd1064e0d6d412f.svg?invert_in_darkmode" align=middle width=13.40191379999999pt height=22.831056599999986pt/> minimization:
 
-<div style="text-align: center;"> <a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b,&space;\end{array}" target="_blank"> <img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\beta&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x\|_1 + \beta\|x - \overline{x}\|_1 \\ \text{subject to} & Ax = b, \end{array}" /></a> </div>
+<p align="center"><img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/e446878229a2485dddbb4998ee40660f.svg?invert_in_darkmode" align=middle width=213.5559888pt height=40.84012515pt/></p>
 
-L1-L2 minimization:
+<img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/839a0dc412c4f8670dd1064e0d6d412f.svg?invert_in_darkmode" align=middle width=13.40191379999999pt height=22.831056599999986pt/>-<img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/336fefe2418749fabf50594e52f7b776.svg?invert_in_darkmode" align=middle width=13.40191379999999pt height=22.831056599999986pt/> minimization:
 
-<div style="text-align: center;">
-<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\|x&space;-&space;\overline{x}\|_2^2&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b,&space;\end{array}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\beta&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x\|_1 + \beta\|x - \overline{x}\|_2^2 \\ \text{subject to} & Ax = b, \end{array}" /></a>
-</div>
+<p align="center"><img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/5884b1a5a4a2cfacb5e28aa2347864ba.svg?invert_in_darkmode" align=middle width=213.5559888pt height=41.89223445pt/></p>
 
 and also for Modified-CS:
 
-<div style="text-align: center;">
-<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x_{T^c}\|_1\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b\,.&space;\end{array}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x_{T^c}\|_1\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b\,,&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x_{T^c}\|_1\\ \text{subject to} & Ax = b\,. \end{array}" /></a>
-</div>
+<p align="center"><img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/737e86dfd03ff46ed0f5ad4bb70db5ad.svg?invert_in_darkmode" align=middle width=143.48172465pt height=40.84012515pt/></p>
 
 The first two problems are analyzed in
 
@@ -49,7 +45,7 @@ This page also contains code to reproduce the experiments and figures in [1].
 ## Organization
 
 * solvers: 
-  code for L1-L1 minimization,  L1-L2 minimization, Modified-CS. 
+  code for <img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/839a0dc412c4f8670dd1064e0d6d412f.svg?invert_in_darkmode" align=middle width=13.40191379999999pt height=22.831056599999986pt/>-<img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/839a0dc412c4f8670dd1064e0d6d412f.svg?invert_in_darkmode" align=middle width=13.40191379999999pt height=22.831056599999986pt/> minimization, <img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/839a0dc412c4f8670dd1064e0d6d412f.svg?invert_in_darkmode" align=middle width=13.40191379999999pt height=22.831056599999986pt/>-<img src="https://rawgit.com/joaofcmota/cs-with-prior-information (fetch/master/svgs/336fefe2418749fabf50594e52f7b776.svg?invert_in_darkmode" align=middle width=13.40191379999999pt height=22.831056599999986pt/> minimization, Modified-CS. 
   Each folder contains a detailed derivation of the respective algorithm.
 
 * createFigures: code for reproducing the figures in [1].
