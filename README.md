@@ -2,9 +2,7 @@
 
 Matlab solvers for L1-L1 minimization:
 
-<div style="text-align: center;">
-<a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b,&space;\end{array}" target="_blank"> <img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\beta&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x\|_1 + \beta\|x - \overline{x}\|_1 \\ \text{subject to} & Ax = b, \end{array}" /></a>
-</div>
+<div style="text-align: center;"> <a href="https://www.codecogs.com/eqnedit.php?latex=\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b,&space;\end{array}" target="_blank"> <img src="https://latex.codecogs.com/gif.latex?\begin{array}[t]{ll}&space;\underset{x}{\text{minimize}}&space;&&space;\|x\|_1&space;&plus;&space;\beta&space;\|x&space;-&space;\overline{x}\|_1&space;\\&space;\text{subject&space;to}&space;&&space;Ax&space;=&space;b&space;\end{array}" title="\begin{array}[t]{ll} \underset{x}{\text{minimize}} & \|x\|_1 + \beta\|x - \overline{x}\|_1 \\ \text{subject to} & Ax = b, \end{array}" /></a> </div>
 
 L1-L2 minimization:
 
